@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Dark Calculator</title>
+
+<style>
+:root {
+  --bg: #0f0f10;
+  --panel: #1b1c1f;
+  --btn: #2a2b2f;
+  --op: #3a3b40;
+  --text: #ffffff;
+  --muted: #9aa0a6;
+  --green: #19c37d;
+}
+
+* {
+  box-sizing: border-box;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+}
+
+body {
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  margin: 0;
+}
+
+.calculator {
+  width: 340px;
+  background: var(--panel);
+  border-radius: 22px;
+  padding: 18px;
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--muted);
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.display {
+  text-align: right;
+  font-size: 48px;
+  font-weight: 600;
+  color: var(--green);
+  padding: 10px 6px 18px;
+  overflow: hidden;
+}
+
+/* Buttons */
+.buttons {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+button {
+  height: 58px;
+  border-radius: 16px;
+  border: none;
+  font-size: 20px;
+  color: var(--text);
+  background: var(--btn);
+  cursor: pointer;
+}
+
+button:active {
+  transform: scale(0.97);
+}
+
+.operator {
+  background: var(--op);
+}
+
+.equals {
+  background: var(--green);
+  color: #000;
+  font-weight: 700;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+</style>
+</head>
+<body>
+
+<div class="calculator">
+  <div class="header">
+    <span>Calculator</span>
+  </div>
+
+  <div id="display" class="display">0</div>
+
+  <div class="buttons">
+    <button aria-label="Backspace" onclick="backspace()">⌫</button>
+    <button class="muted" onclick="clearAll()">C</button>
+    <button class="operator" onclick="append('%')">%</button>
+    <button class="operator" onclick="append('/')">÷</button>
+
+    <button onclick="append('7')">7</button>
+    <button onclick="append('8')">8</button>
+    <button onclick="append('9')">9</button>
+    <button class="operator" onclick="append('*')">×</button>
+
+    <button onclick="append('4')">4</button>
+    <button onclick="append('5')">5</button>
+    <button onclick="append('6')">6</button>
+    <button class="operator" onclick="append('-')">−</button>
+
+    <button onclick="append('1')">1</button>
+    <button onclick="append('2')">2</button>
+    <button onclick="append('3')">3</button>
+    <button class="operator" onclick="append('+')">+</button>
+
+    <button onclick="toggleSign()">+/-</button>
+    <button onclick="append('0')">0</button>
+    <button onclick="append('.')">.</button>
+    <button class="equals" onclick="calculate()">=</button>
+  </div>
+</div>
+
+<script>
+let display = document.getElementById("display");
+let expression = "";
+
+function update() {
+  display.textContent = expression || "0";
+}
+
+function append(value) {
+  expression += value;
+  update();
+}
+
+function clearAll() {
+  expression = "";
+  update();
+}
+
+function backspace() {
+  expression = expression.slice(0, -1);
+  update();
+}
+
+function toggleSign() {
+  if (!expression) return;
+  expression = expression.startsWith("-")
+    ? expression.slice(1)
+    : "-" + expression;
+  update();
+}
+
+function calculate() {
+  try {
+    expression = eval(
+      expression.replace('%', '/100')
+    ).toString();
+  } catch {
+    expression = "Error";
+  }
+  update();
+}
+
+/* Keyboard support */
+document.addEventListener("keydown", e => {
+  if ("0123456789.+-*/".includes(e.key)) append(e.key);
+  if (e.key === "Enter") calculate();
+  if (e.key === "Backspace") backspace();
+  if (e.key === "Escape") clearAll();
+});
+</script>
+
+</body>
+</html>
